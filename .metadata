@@ -1,0 +1,15 @@
+version:
+  revision: "manual-clean-architecture-conversion"
+  channel: "stable"
+
+project_type: app
+
+migration:
+  platforms:
+    - platform: web
+      create_revision: manual-clean-architecture-conversion
+      base_revision: manual-clean-architecture-conversion
+
+  unmanaged_files:
+    - 'lib/main.dart'
+    - 'web/index.html'

@@ -1,0 +1,12 @@
+{
+  "name": "Eurocertifica",
+  "short_name": "Eurocertifica",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F5F7FB",
+  "theme_color": "#0052CC",
+  "description": "Eurocertifica course platform",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": []
+}

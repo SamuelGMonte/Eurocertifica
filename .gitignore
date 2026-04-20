@@ -1,0 +1,36 @@
+# Flutter and Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+pubspec.lock
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Logs and coverage
+*.log
+coverage/
+*.lcov
+
+# Runtime and local data
+tmp/
+temp/
+*.db
+*.sqlite
+*.sqlite3
