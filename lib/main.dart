@@ -13,7 +13,7 @@ import 'features/learning/domain/usecases/logout_user.dart';
 import 'features/learning/domain/usecases/submit_quiz.dart';
 import 'features/learning/domain/usecases/update_lesson_progress.dart';
 import 'features/learning/presentation/controllers/app_controller.dart';
-import 'features/learning/presentation/pages/app_shell.dart';
+import 'app/presentation/pages/app_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

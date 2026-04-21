@@ -1,4 +1,4 @@
-import '../entities/user.dart';
+import '../../../login/domain/entities/user.dart';
 import '../repositories/learning_repository.dart';
 
 class LoginUser {

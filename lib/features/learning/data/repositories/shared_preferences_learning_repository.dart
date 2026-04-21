@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/course.dart';
 import '../../domain/entities/learning_state.dart';
 import '../../domain/entities/quiz.dart';
-import '../../domain/entities/user.dart';
+import '../../../login/domain/entities/user.dart';
 import '../../domain/entities/user_progress.dart';
 import '../../domain/repositories/learning_repository.dart';
 import '../datasources/course_seed.dart';
@@ -110,7 +110,9 @@ class SharedPreferencesLearningRepository implements LearningRepository {
     await _preferences.setString(
       _coursesKey,
       jsonEncode(
-        courses.map((course) => CourseModel.fromEntity(course).toJson()).toList(),
+        courses
+            .map((course) => CourseModel.fromEntity(course).toJson())
+            .toList(),
       ),
     );
   }

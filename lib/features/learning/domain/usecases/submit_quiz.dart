@@ -1,6 +1,6 @@
 import '../entities/course.dart';
 import '../entities/quiz.dart';
-import '../entities/user.dart';
+import '../../../login/domain/entities/user.dart';
 import '../entities/user_progress.dart';
 import '../repositories/learning_repository.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/course.dart';
 import '../../domain/entities/quiz.dart';
-import '../../domain/entities/user.dart';
+import '../../../login/domain/entities/user.dart';
 import '../../domain/entities/user_progress.dart';
 import '../../domain/usecases/enroll_course.dart';
 import '../../domain/usecases/load_learning_state.dart';
@@ -11,7 +11,15 @@ import '../../domain/usecases/logout_user.dart';
 import '../../domain/usecases/submit_quiz.dart';
 import '../../domain/usecases/update_lesson_progress.dart';
 
-enum AppPage { login, dashboard, courses, courseContent, quiz, ranking, profile }
+enum AppPage {
+  login,
+  dashboard,
+  courses,
+  courseContent,
+  quiz,
+  ranking,
+  profile
+}
 
 class AppController extends ChangeNotifier {
   AppController({
@@ -58,7 +66,8 @@ class AppController extends ChangeNotifier {
 
   int get averageProgress {
     if (enrolledCourses.isEmpty) return 0;
-    final total = enrolledCourses.fold<int>(0, (sum, course) => sum + course.progress);
+    final total =
+        enrolledCourses.fold<int>(0, (sum, course) => sum + course.progress);
     return (total / enrolledCourses.length).round();
   }
 

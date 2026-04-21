@@ -1,7 +1,7 @@
 import '../entities/course.dart';
 import '../entities/learning_state.dart';
 import '../entities/quiz.dart';
-import '../entities/user.dart';
+import '../../../login/domain/entities/user.dart';
 import '../entities/user_progress.dart';
 
 abstract class LearningRepository {

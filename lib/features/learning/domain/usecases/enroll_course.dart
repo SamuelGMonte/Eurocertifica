@@ -1,5 +1,5 @@
 import '../entities/course.dart';
-import '../entities/user.dart';
+import '../../../login/domain/entities/user.dart';
 import '../entities/user_progress.dart';
 import '../repositories/learning_repository.dart';
 
@@ -15,9 +15,8 @@ class EnrollCourse {
     required User? user,
   }) async {
     final updatedCourses = courses
-        .map((course) => course.id == courseId
-            ? course.copyWith(isEnrolled: true)
-            : course)
+        .map((course) =>
+            course.id == courseId ? course.copyWith(isEnrolled: true) : course)
         .toList();
 
     final updatedProgress = Map<String, UserProgress>.from(progressByCourse);

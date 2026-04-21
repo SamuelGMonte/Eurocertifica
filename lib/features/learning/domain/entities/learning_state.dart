@@ -1,5 +1,5 @@
 import 'course.dart';
-import 'user.dart';
+import '../../../login/domain/entities/user.dart';
 import 'user_progress.dart';
 
 class LearningState {

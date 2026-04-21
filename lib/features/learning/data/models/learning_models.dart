@@ -1,7 +1,7 @@
 import '../../domain/entities/course.dart';
 import '../../domain/entities/learning_state.dart';
 import '../../domain/entities/quiz.dart';
-import '../../domain/entities/user.dart';
+import '../../../login/domain/entities/user.dart';
 import '../../domain/entities/user_progress.dart';
 
 class UserModel extends User {
@@ -77,7 +77,9 @@ class CourseModel extends Course {
         'category': category,
         'progress': progress,
         'isEnrolled': isEnrolled,
-        'lessons': lessons.map((lesson) => LessonModel.fromEntity(lesson).toJson()).toList(),
+        'lessons': lessons
+            .map((lesson) => LessonModel.fromEntity(lesson).toJson())
+            .toList(),
         'quiz': QuizModel.fromEntity(quiz).toJson(),
       };
 }
@@ -140,7 +142,9 @@ class QuizModel extends Quiz {
         'id': id,
         'courseId': courseId,
         'passingScore': passingScore,
-        'questions': questions.map((question) => QuestionModel.fromEntity(question).toJson()).toList(),
+        'questions': questions
+            .map((question) => QuestionModel.fromEntity(question).toJson())
+            .toList(),
       };
 }
 
@@ -164,7 +168,8 @@ class QuestionModel extends Question {
         text: json['text'] as String,
         correctAnswer: json['correctAnswer'] as String,
         alternatives: (json['alternatives'] as List<dynamic>)
-            .map((item) => AlternativeModel.fromJson(item as Map<String, dynamic>))
+            .map((item) =>
+                AlternativeModel.fromJson(item as Map<String, dynamic>))
             .toList(),
       );
 
@@ -172,7 +177,9 @@ class QuestionModel extends Question {
         'id': id,
         'text': text,
         'correctAnswer': correctAnswer,
-        'alternatives': alternatives.map((alt) => AlternativeModel.fromEntity(alt).toJson()).toList(),
+        'alternatives': alternatives
+            .map((alt) => AlternativeModel.fromEntity(alt).toJson())
+            .toList(),
       };
 }
 
@@ -183,13 +190,15 @@ class AlternativeModel extends Alternative {
     required super.isCorrect,
   });
 
-  factory AlternativeModel.fromEntity(Alternative alternative) => AlternativeModel(
+  factory AlternativeModel.fromEntity(Alternative alternative) =>
+      AlternativeModel(
         id: alternative.id,
         text: alternative.text,
         isCorrect: alternative.isCorrect,
       );
 
-  factory AlternativeModel.fromJson(Map<String, dynamic> json) => AlternativeModel(
+  factory AlternativeModel.fromJson(Map<String, dynamic> json) =>
+      AlternativeModel(
         id: json['id'] as String,
         text: json['text'] as String,
         isCorrect: json['isCorrect'] as bool,
@@ -211,7 +220,8 @@ class UserProgressModel extends UserProgress {
     required super.quizAttempts,
   });
 
-  factory UserProgressModel.fromEntity(UserProgress progress) => UserProgressModel(
+  factory UserProgressModel.fromEntity(UserProgress progress) =>
+      UserProgressModel(
         userId: progress.userId,
         courseId: progress.courseId,
         currentLessonId: progress.currentLessonId,
@@ -219,13 +229,16 @@ class UserProgressModel extends UserProgress {
         quizAttempts: progress.quizAttempts,
       );
 
-  factory UserProgressModel.fromJson(Map<String, dynamic> json) => UserProgressModel(
+  factory UserProgressModel.fromJson(Map<String, dynamic> json) =>
+      UserProgressModel(
         userId: json['userId'] as String,
         courseId: json['courseId'] as String,
         currentLessonId: json['currentLessonId'] as String,
-        completedLessons: List<String>.from(json['completedLessons'] as List<dynamic>),
+        completedLessons:
+            List<String>.from(json['completedLessons'] as List<dynamic>),
         quizAttempts: (json['quizAttempts'] as List<dynamic>)
-            .map((item) => QuizAttemptModel.fromJson(item as Map<String, dynamic>))
+            .map((item) =>
+                QuizAttemptModel.fromJson(item as Map<String, dynamic>))
             .toList(),
       );
 
@@ -234,7 +247,9 @@ class UserProgressModel extends UserProgress {
         'courseId': courseId,
         'currentLessonId': currentLessonId,
         'completedLessons': completedLessons,
-        'quizAttempts': quizAttempts.map((attempt) => QuizAttemptModel.fromEntity(attempt).toJson()).toList(),
+        'quizAttempts': quizAttempts
+            .map((attempt) => QuizAttemptModel.fromEntity(attempt).toJson())
+            .toList(),
       };
 }
 
@@ -259,11 +274,13 @@ class QuizAttemptModel extends QuizAttempt {
         date: attempt.date,
       );
 
-  factory QuizAttemptModel.fromJson(Map<String, dynamic> json) => QuizAttemptModel(
+  factory QuizAttemptModel.fromJson(Map<String, dynamic> json) =>
+      QuizAttemptModel(
         id: json['id'] as String,
         courseId: json['courseId'] as String,
         userId: json['userId'] as String,
-        answers: Map<String, String>.from(json['answers'] as Map<dynamic, dynamic>),
+        answers:
+            Map<String, String>.from(json['answers'] as Map<dynamic, dynamic>),
         score: json['score'] as int,
         passed: json['passed'] as bool,
         date: DateTime.parse(json['date'] as String),
