@@ -1,5 +1,6 @@
+import 'package:eurocertifica_web/features/auth/domain/entities/user.dart';
+
 import '../entities/course.dart';
-import '../../../login/domain/entities/user.dart';
 import '../entities/user_progress.dart';
 import '../repositories/learning_repository.dart';
 
@@ -12,7 +13,7 @@ class EnrollCourse {
     required String courseId,
     required List<Course> courses,
     required Map<String, UserProgress> progressByCourse,
-    required User? user,
+    required User user,
   }) async {
     final updatedCourses = courses
         .map((course) =>
@@ -23,7 +24,7 @@ class EnrollCourse {
     updatedProgress.putIfAbsent(
       courseId,
       () => UserProgress(
-        userId: user?.id ?? '',
+        userId: user.id,
         courseId: courseId,
         currentLessonId: '',
         completedLessons: const [],

@@ -76,10 +76,11 @@ class AppSidebar extends StatelessWidget {
     final controller = context.watch<AppController>();
     final user = controller.user;
     final items = [
-      _NavItem('Início', Icons.home_rounded, AppPage.dashboard),
-      _NavItem('Cursos', Icons.menu_book_rounded, AppPage.courses),
-      _NavItem('Rank', Icons.bar_chart_rounded, AppPage.ranking),
-      _NavItem('Perfil & Certificados', Icons.workspace_premium_rounded, AppPage.profile),
+      const _NavItem('Início', Icons.home_rounded, AppPage.dashboard),
+      const _NavItem('Cursos', Icons.menu_book_rounded, AppPage.courses),
+      const _NavItem('Rank', Icons.bar_chart_rounded, AppPage.ranking),
+      const _NavItem('Perfil & Certificados', Icons.workspace_premium_rounded,
+          AppPage.profile),
     ];
 
     return DecoratedBox(
@@ -113,7 +114,8 @@ class AppSidebar extends StatelessWidget {
                       ),
                       Text(
                         'Plataforma de Cursos',
-                        style: TextStyle(color: Color(0xFFBFDBFE), fontSize: 12),
+                        style:
+                            TextStyle(color: Color(0xFFBFDBFE), fontSize: 12),
                       ),
                     ],
                   ),
@@ -141,15 +143,17 @@ class AppSidebar extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       user.email,
-                      style: const TextStyle(color: Color(0xFFBFDBFE), fontSize: 12),
+                      style: const TextStyle(
+                          color: Color(0xFFBFDBFE), fontSize: 12),
                     ),
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        const Icon(Icons.star_rounded, color: Color(0xFFFDE047), size: 20),
+                        const Icon(Icons.star_rounded,
+                            color: Color(0xFFFDE047), size: 20),
                         const SizedBox(width: 6),
                         Text(
-                          '${user.points} pontos',
+                          '${user.extraData?['points']} pontos',
                           style: const TextStyle(
                             color: Color(0xFFFDE047),
                             fontWeight: FontWeight.w700,
@@ -169,7 +173,8 @@ class AppSidebar extends StatelessWidget {
                   return ListTile(
                     selected: selected,
                     selectedTileColor: const Color(0x263B82F6),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                     leading: Icon(item.icon, color: Colors.white),
                     title: Text(
                       item.label,
@@ -195,13 +200,15 @@ class AppSidebar extends StatelessWidget {
                 icon: const Icon(Icons.logout_rounded, color: Colors.white),
                 label: const Text(
                   'Sair',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w700),
                 ),
                 style: TextButton.styleFrom(
                   alignment: Alignment.centerLeft,
                   minimumSize: const Size.fromHeight(48),
                   backgroundColor: const Color(0x1AFFFFFF),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ),

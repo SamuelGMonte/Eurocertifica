@@ -1,5 +1,6 @@
+import 'package:eurocertifica_web/features/auth/domain/entities/user.dart';
+
 import '../entities/course.dart';
-import '../../../login/domain/entities/user.dart';
 import '../entities/user_progress.dart';
 import '../repositories/learning_repository.dart';
 
@@ -13,7 +14,7 @@ class UpdateLessonProgress {
     required String lessonId,
     required List<Course> courses,
     required Map<String, UserProgress> progressByCourse,
-    required User? user,
+    required User user,
   }) async {
     final course = courses.where((item) => item.id == courseId).firstOrNull;
     if (course == null) {
@@ -22,7 +23,7 @@ class UpdateLessonProgress {
 
     final current = progressByCourse[courseId] ??
         UserProgress(
-          userId: user?.id ?? '',
+          userId: user.id,
           courseId: courseId,
           currentLessonId: lessonId,
           completedLessons: const [],

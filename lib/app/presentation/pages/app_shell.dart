@@ -5,7 +5,7 @@ import '../../../features/learning/presentation/controllers/app_controller.dart'
 import '../../../features/learning/presentation/pages/course_content_page.dart';
 import '../../../features/learning/presentation/pages/courses_page.dart';
 import '../../../features/learning/presentation/pages/dashboard_page.dart';
-import '../../../features/learning/presentation/pages/login_page.dart';
+import '../../../features/auth/presentation/pages/login_page.dart';
 import '../../../features/learning/presentation/pages/profile_page.dart';
 import '../../../features/learning/presentation/pages/quiz_page.dart';
 import '../../../features/learning/presentation/pages/ranking_page.dart';

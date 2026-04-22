@@ -1,5 +1,6 @@
+import 'package:eurocertifica_web/features/auth/domain/entities/user.dart';
+
 import 'course.dart';
-import '../../../login/domain/entities/user.dart';
 import 'user_progress.dart';
 
 class LearningState {

@@ -1,12 +1,12 @@
+import 'package:eurocertifica_web/features/auth/domain/usecases/login_usecase.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/course.dart';
 import '../../domain/entities/quiz.dart';
-import '../../../login/domain/entities/user.dart';
+import '../../../auth/domain/entities/user.dart';
 import '../../domain/entities/user_progress.dart';
 import '../../domain/usecases/enroll_course.dart';
 import '../../domain/usecases/load_learning_state.dart';
-import '../../domain/usecases/login_user.dart';
 import '../../domain/usecases/logout_user.dart';
 import '../../domain/usecases/submit_quiz.dart';
 import '../../domain/usecases/update_lesson_progress.dart';
@@ -24,7 +24,7 @@ enum AppPage {
 class AppController extends ChangeNotifier {
   AppController({
     required LoadLearningState loadLearningState,
-    required LoginUser loginUser,
+    required LoginUsecase loginUser,
     required LogoutUser logoutUser,
     required EnrollCourse enrollCourse,
     required UpdateLessonProgress updateLessonProgress,
@@ -37,7 +37,7 @@ class AppController extends ChangeNotifier {
         _submitQuiz = submitQuiz;
 
   final LoadLearningState _loadLearningState;
-  final LoginUser _loginUser;
+  final LoginUsecase _loginUser;
   final LogoutUser _logoutUser;
   final EnrollCourse _enrollCourse;
   final UpdateLessonProgress _updateLessonProgress;
@@ -88,7 +88,7 @@ class AppController extends ChangeNotifier {
 
   Future<bool> login(String email, String password) async {
     if (email.trim().isEmpty || password.isEmpty) return false;
-    _user = await _loginUser(email: email, password: password);
+    _user = await _loginUser.call(email, password);
     _page = AppPage.courses;
     notifyListeners();
     return true;
@@ -128,7 +128,7 @@ class AppController extends ChangeNotifier {
       courseId: courseId,
       courses: _courses,
       progressByCourse: _progressByCourse,
-      user: _user,
+      user: _user!,
     );
     _courses = result.courses;
     _progressByCourse = result.progress;
@@ -141,7 +141,7 @@ class AppController extends ChangeNotifier {
       lessonId: lessonId,
       courses: _courses,
       progressByCourse: _progressByCourse,
-      user: _user,
+      user: _user!,
     );
     _courses = result.courses;
     _progressByCourse = result.progress;
@@ -157,7 +157,7 @@ class AppController extends ChangeNotifier {
       answers: answers,
       courses: _courses,
       progressByCourse: _progressByCourse,
-      user: _user,
+      user: _user!,
     );
     _user = result.user;
     _progressByCourse = result.progress;

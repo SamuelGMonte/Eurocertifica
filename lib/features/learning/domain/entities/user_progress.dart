@@ -9,14 +9,14 @@ class UserProgress {
     required this.quizAttempts,
   });
 
-  final String userId;
+  final int userId;
   final String courseId;
   final String currentLessonId;
   final List<String> completedLessons;
   final List<QuizAttempt> quizAttempts;
 
   UserProgress copyWith({
-    String? userId,
+    int? userId,
     String? courseId,
     String? currentLessonId,
     List<String>? completedLessons,

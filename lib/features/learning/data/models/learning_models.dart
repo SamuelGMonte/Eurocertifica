@@ -1,38 +1,7 @@
 import '../../domain/entities/course.dart';
 import '../../domain/entities/learning_state.dart';
 import '../../domain/entities/quiz.dart';
-import '../../../login/domain/entities/user.dart';
 import '../../domain/entities/user_progress.dart';
-
-class UserModel extends User {
-  const UserModel({
-    required super.id,
-    required super.email,
-    required super.name,
-    required super.points,
-  });
-
-  factory UserModel.fromEntity(User user) => UserModel(
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        points: user.points,
-      );
-
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json['id'] as String,
-        email: json['email'] as String,
-        name: json['name'] as String,
-        points: json['points'] as int,
-      );
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'email': email,
-        'name': name,
-        'points': points,
-      };
-}
 
 class CourseModel extends Course {
   const CourseModel({
@@ -231,7 +200,7 @@ class UserProgressModel extends UserProgress {
 
   factory UserProgressModel.fromJson(Map<String, dynamic> json) =>
       UserProgressModel(
-        userId: json['userId'] as String,
+        userId: json['userId'] as int,
         courseId: json['courseId'] as String,
         currentLessonId: json['currentLessonId'] as String,
         completedLessons:
@@ -278,7 +247,7 @@ class QuizAttemptModel extends QuizAttempt {
       QuizAttemptModel(
         id: json['id'] as String,
         courseId: json['courseId'] as String,
-        userId: json['userId'] as String,
+        userId: json['userId'] as int,
         answers:
             Map<String, String>.from(json['answers'] as Map<dynamic, dynamic>),
         score: json['score'] as int,

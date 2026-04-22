@@ -15,7 +15,9 @@ class RankingPage extends StatelessWidget {
       _RankingEntry(1, 'João Silva', 450, '🥇'),
       _RankingEntry(2, 'Maria Santos', 420, '🥈'),
       _RankingEntry(3, 'Pedro Costa', 380, '🥉'),
-      _RankingEntry(4, user?.name ?? 'Você', user?.points ?? 0, '★', isUser: true),
+      _RankingEntry(
+          4, user?.name ?? 'Você', user?.extraData?['points'] ?? 0, '★',
+          isUser: true),
       _RankingEntry(5, 'Ana Oliveira', 250, ''),
       _RankingEntry(6, 'Carlos Mendes', 200, ''),
       _RankingEntry(7, 'Lucia Ferreira', 180, ''),
@@ -43,9 +45,12 @@ class RankingPage extends StatelessWidget {
                     child: _HeroMetric(label: 'Sua Posição', value: '#4'),
                   ),
                   Expanded(
-                    child: _HeroMetric(label: 'Seus Pontos', value: '${user.points}'),
+                    child: _HeroMetric(
+                        label: 'Seus Pontos',
+                        value: '${user.extraData!['points']}'),
                   ),
-                  const Icon(Icons.star_rounded, color: Color(0xFFFDE047), size: 56),
+                  const Icon(Icons.star_rounded,
+                      color: Color(0xFFFDE047), size: 56),
                 ],
               ),
             ),
@@ -55,7 +60,8 @@ class RankingPage extends StatelessWidget {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
-                headingRowColor: MaterialStateProperty.all(const Color(0xFFF3F4F6)),
+                headingRowColor:
+                    MaterialStateProperty.all(const Color(0xFFF3F4F6)),
                 columns: const [
                   DataColumn(label: Text('Posição')),
                   DataColumn(label: Text('Colaborador')),
@@ -75,24 +81,33 @@ class RankingPage extends StatelessWidget {
                             backgroundColor: _rankColor(entry.rank),
                             child: Text(
                               '${entry.rank}',
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900),
                             ),
                           ),
                           const SizedBox(width: 10),
-                          Text('${entry.rank}º', style: const TextStyle(fontWeight: FontWeight.w800)),
+                          Text('${entry.rank}º',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w800)),
                         ],
                       )),
                       DataCell(Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(entry.name, style: const TextStyle(fontWeight: FontWeight.w800)),
+                          Text(entry.name,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w800)),
                           if (entry.isUser)
-                            const Text('Você', style: TextStyle(color: AppTheme.primary, fontSize: 12)),
+                            const Text('Você',
+                                style: TextStyle(
+                                    color: AppTheme.primary, fontSize: 12)),
                         ],
                       )),
                       DataCell(Text('${entry.points}')),
-                      DataCell(Text(entry.badge, style: const TextStyle(fontSize: 22))),
+                      DataCell(Text(entry.badge,
+                          style: const TextStyle(fontSize: 22))),
                     ],
                   );
                 }).toList(),

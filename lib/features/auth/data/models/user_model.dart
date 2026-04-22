@@ -3,76 +3,43 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-enum UserType { collaborator, manager }
+import 'package:eurocertifica_web/features/auth/domain/entities/user.dart';
 
-class User {
-  final int id;
-  final String email;
-  final String name;
-  final UserType type;
-  final Map<String, dynamic>? extraData;
-
-  const User({
-    required this.id,
-    required this.email,
-    required this.name,
-    required this.type,
-    this.extraData,
+class UserModel extends User {
+  UserModel({
+    required super.id,
+    required super.email,
+    required super.name,
+    required super.type,
+    required super.idDepartment,
+    required super.extraData,
   });
-
-  factory User.collaborator(
-      {required int id,
-      required String email,
-      required String name,
-      required UserType type,
-      required int points,
-      required String registry,
-      required String role,
-      required int idTeam}) {
-    return User(
-      id: id,
-      email: email,
-      name: name,
-      type: type,
-      extraData: {
-        'points': points,
-        'role': role,
-        'idTeam': idTeam,
-      },
-    );
-  }
-
-  factory User.manager(
-      {required int id,
-      required String email,
-      required String name,
-      required UserType type,
-      required int department,
-      required List<int> idTeams}) {
-    return User(
-      id: id,
-      email: email,
-      name: name,
-      type: type,
-      extraData: {
-        'department': department,
-        'idTeams': idTeams,
-      },
-    );
-  }
 
   User copyWith(
       {int? id,
       String? email,
       String? name,
       UserType? type,
+      int? idDepartment,
       Map<String, dynamic>? extraData}) {
     return User(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
       type: type ?? this.type,
+      idDepartment: idDepartment ?? this.idDepartment,
       extraData: extraData ?? this.extraData,
+    );
+  }
+
+  factory UserModel.fromEntity(User user) {
+    return UserModel(
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      type: user.type,
+      idDepartment: user.idDepartment,
+      extraData: user.extraData,
     );
   }
 
@@ -86,12 +53,13 @@ class User {
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
       id: map['id'] as int,
       email: map['email'] as String,
       name: map['name'] as String,
       type: map['type'] == 'manager' ? UserType.manager : UserType.collaborator,
+      idDepartment: map['idDepartment'] as int,
       extraData: map['extraData'] != null
           ? Map<String, dynamic>.from(
               (map['extraData'] as Map<String, dynamic>))
@@ -101,8 +69,8 @@ class User {
 
   String toJson() => json.encode(toMap());
 
-  factory User.fromJson(String source) =>
-      User.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) =>
+      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -110,7 +78,7 @@ class User {
   }
 
   @override
-  bool operator ==(covariant User other) {
+  bool operator ==(covariant UserModel other) {
     if (identical(this, other)) return true;
 
     return other.id == id &&

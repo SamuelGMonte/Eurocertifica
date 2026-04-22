@@ -1,6 +1,8 @@
+import 'package:eurocertifica_web/features/auth/data/models/user_model.dart';
+import 'package:eurocertifica_web/features/auth/domain/entities/user.dart';
+
 import '../entities/course.dart';
 import '../entities/quiz.dart';
-import '../../../login/domain/entities/user.dart';
 import '../entities/user_progress.dart';
 import '../repositories/learning_repository.dart';
 
@@ -19,7 +21,7 @@ class SubmitQuiz {
     required Map<String, String> answers,
     required List<Course> courses,
     required Map<String, UserProgress> progressByCourse,
-    required User? user,
+    required User user,
   }) async {
     final course = courses.where((item) => item.id == courseId).firstOrNull;
     if (course == null) {
@@ -34,7 +36,7 @@ class SubmitQuiz {
 
     final current = progressByCourse[courseId] ??
         UserProgress(
-          userId: user?.id ?? '',
+          userId: user.id,
           courseId: courseId,
           currentLessonId: '',
           completedLessons: const [],
@@ -46,8 +48,11 @@ class SubmitQuiz {
         quizAttempts: [...current.quizAttempts, attempt],
       );
 
-    final updatedUser = attempt.passed && user != null
-        ? user.copyWith(points: user.points + 100)
+    final updatedUser = attempt.passed
+        ? UserModel.fromEntity(user).copyWith(extraData: {
+            ...?user.extraData,
+            'points': user.extraData?['points'] + 100
+          })
         : user;
 
     await _repository.saveProgress(updatedProgress);

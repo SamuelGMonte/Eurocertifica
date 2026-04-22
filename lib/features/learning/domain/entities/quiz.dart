@@ -51,7 +51,7 @@ class QuizAttempt {
 
   final String id;
   final String courseId;
-  final String userId;
+  final int userId;
   final Map<String, String> answers;
   final int score;
   final bool passed;
