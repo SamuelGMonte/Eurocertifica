@@ -23,6 +23,13 @@ flutter analyze
 flutter test
 ```
 
+## 📚 Documentação de API
+
+A documentação da API está em `doc/swagger/api-docs.yaml` no formato OpenAPI 3.0.
+
+Para visualizar interativamente:
+- **Swagger UI:** [https://editor.swagger.io](https://editor.swagger.io) (cole o conteúdo do arquivo)
+
 ## Documentação de Arquitetura (C4)
 
 Este documento descreve a arquitetura da solução utilizando o modelo **C4 (Contexto, Contêineres e Componentes)**.
