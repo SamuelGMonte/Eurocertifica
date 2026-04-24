@@ -20,7 +20,7 @@ void main() {
   test('login deve chamar remoteDatasource.login', () async {
     const tEmail = 'a@a.com';
     const tPassword = '123';
-    final tUser = User(
+    const tUser = User(
       id: 1,
       email: tEmail,
       name: 'Any',
