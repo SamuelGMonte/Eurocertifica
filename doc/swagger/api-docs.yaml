@@ -1,0 +1,825 @@
+openapi: 3.0.0
+info:
+  title: Plataforma Challenge API
+  description: API para gestão de gamificação de desempenho, pontos, desafios e recompensas
+  version: 1.0.0
+  contact:
+    name: Time de Desenvolvimento
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://api.plataforma-challenge.com/v1
+    description: Produção
+  - url: https://sandbox-api.plataforma-challenge.com/v1
+    description: Sandbox
+
+tags:
+  - name: Autenticação
+    description: Endpoints de login e controle de acesso
+  - name: Colaborador
+    description: Dashboards e progresso do colaborador
+  - name: Gestor
+    description: Gestão de times e desafios
+  - name: Pontos
+    description: Sistema de pontos "moscas"
+  - name: Desafios
+    description: CRUD e atribuição de desafios
+  - name: Ranking
+    description: Classificação de desempenho
+  - name: Chat
+    description: Comunicação gestor-colaborador
+  - name: Certificados
+    description: Emissão automática de certificados
+  - name: Recompensas
+    description: Catálogo e troca de recompensas
+  - name: Cursos
+    description: Trilhas de aprendizado gamificadas
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+        tipo:
+          type: string
+          enum:
+            - colaborador
+            - gestor
+    
+    Colaborador:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        area:
+          type: string
+        competencias:
+          type: array
+          items:
+            type: string
+        pontos_moscas:
+          type: integer
+    
+    Gestor:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        time_ids:
+          type: array
+          items:
+            type: integer
+    
+    Desafio:
+      type: object
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        descricao:
+          type: string
+        area:
+          type: string
+        competencia:
+          type: string
+        pontos:
+          type: integer
+        data_inicio:
+          type: string
+          format: date
+        data_fim:
+          type: string
+          format: date
+    
+    DesafioDiario:
+      type: object
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        descricao:
+          type: string
+        pontos:
+          type: integer
+        data:
+          type: string
+          format: date
+    
+    Progresso:
+      type: object
+      properties:
+        colaborador_id:
+          type: integer
+        desafio_id:
+          type: integer
+        status:
+          type: string
+          enum:
+            - pendente
+            - concluido
+        data_conclusao:
+          type: string
+          format: date-time
+        pontos_obtidos:
+          type: integer
+    
+    Mensagem:
+      type: object
+      properties:
+        id:
+          type: integer
+        remetente_id:
+          type: integer
+        destinatario_id:
+          type: integer
+        conteudo:
+          type: string
+        data_envio:
+          type: string
+          format: date-time
+        lida:
+          type: boolean
+    
+    Recompensa:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        descricao:
+          type: string
+        custo_pontos:
+          type: integer
+        disponivel:
+          type: boolean
+    
+    Certificado:
+      type: object
+      properties:
+        id:
+          type: integer
+        colaborador_id:
+          type: integer
+        trilha:
+          type: string
+        data_emissao:
+          type: string
+          format: date
+        url_pdf:
+          type: string
+    
+    Curso:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        modulo:
+          type: string
+        obrigatorio:
+          type: boolean
+    
+    ErroResponse:
+      type: object
+      properties:
+        codigo:
+          type: integer
+        mensagem:
+          type: string
+        detalhes:
+          type: string
+
+paths:
+  # AUTENTICAÇÃO
+  /auth/login:
+    post:
+      tags:
+        - Autenticação
+      summary: Autentica usuário no portal
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - senha
+              properties:
+                email:
+                  type: string
+                senha:
+                  type: string
+      responses:
+        '200':
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  usuario:
+                    $ref: '#/components/schemas/Usuario'
+        '401':
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroResponse'
+  
+  /auth/validate:
+    get:
+      tags:
+        - Autenticação
+      summary: Valida token de autenticação
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Token válido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  usuario_id:
+                    type: integer
+
+  # COLABORADOR
+  /colaborador/{id}/dashboard:
+    get:
+      tags:
+        - Colaborador
+      summary: Obtém painel pessoal do colaborador
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Dados do dashboard
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  colaborador:
+                    $ref: '#/components/schemas/Colaborador'
+                  pontos_totais:
+                    type: integer
+                  desafios_concluidos:
+                    type: integer
+                  desafios_pendentes:
+                    type: integer
+                  posicao_ranking:
+                    type: integer
+
+  /colaborador/{id}/progresso:
+    get:
+      tags:
+        - Colaborador
+      summary: Obtém progresso detalhado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Progresso detalhado
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Progresso'
+
+  # GESTOR
+  /gestor/{id}/time:
+    get:
+      tags:
+        - Gestor
+      summary: Obtém o time do gestor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de colaboradores
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gestor:
+                    $ref: '#/components/schemas/Gestor'
+                  colaboradores:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Colaborador'
+
+  /gestor/{id}/desafios:
+    post:
+      tags:
+        - Gestor
+      summary: Cadastra novo desafio
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Desafio'
+      responses:
+        '201':
+          description: Desafio criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Desafio'
+
+  /gestor/{id}/time/analise-holistica:
+    get:
+      tags:
+        - Gestor
+      summary: Análise holística do time
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Métricas do time
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_colaboradores:
+                    type: integer
+                  media_pontos:
+                    type: number
+                  total_desafios_concluidos:
+                    type: integer
+                  ranking_interno:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        posicao:
+                          type: integer
+                        colaborador_id:
+                          type: integer
+                        nome:
+                          type: string
+                        pontos:
+                          type: integer
+
+  # PONTOS
+  /pontos/colaborador/{id}:
+    get:
+      tags:
+        - Pontos
+      summary: Obtém pontos do colaborador
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Saldo de pontos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  colaborador_id:
+                    type: integer
+                  pontos_moscas:
+                    type: integer
+                  historico:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        data:
+                          type: string
+                          format: date-time
+                        pontos:
+                          type: integer
+                        tipo:
+                          type: string
+
+  /pontos/transacao:
+    post:
+      tags:
+        - Pontos
+      summary: Registra transação de pontos
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - colaborador_id
+                - pontos
+                - tipo
+              properties:
+                colaborador_id:
+                  type: integer
+                desafio_id:
+                  type: integer
+                pontos:
+                  type: integer
+                tipo:
+                  type: string
+                  enum:
+                    - ganho
+                    - resgate
+      responses:
+        '201':
+          description: Transação registrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    type: string
+                  saldo_atual:
+                    type: integer
+
+  # DESAFIOS
+  /desafios:
+    get:
+      tags:
+        - Desafios
+      summary: Lista todos os desafios
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de desafios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Desafio'
+
+  /desafios/diarios:
+    get:
+      tags:
+        - Desafios
+      summary: Obtém desafios diários
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Desafios do dia
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DesafioDiario'
+
+  # RANKING
+  /ranking:
+    get:
+      tags:
+        - Ranking
+      summary: Obtém ranking geral
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: area
+          in: query
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Ranking dos colaboradores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    posicao:
+                      type: integer
+                    colaborador:
+                      $ref: '#/components/schemas/Colaborador'
+                    pontos:
+                      type: integer
+
+  /ranking/colaborador/{id}:
+    get:
+      tags:
+        - Ranking
+      summary: Posição específica no ranking
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Posição no ranking
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  colaborador_id:
+                    type: integer
+                  posicao:
+                    type: integer
+                  total_colaboradores:
+                    type: integer
+                  percentual:
+                    type: number
+
+  # CHAT
+  /chat/mensagens/{usuario1_id}/{usuario2_id}:
+    get:
+      tags:
+        - Chat
+      summary: Obtém mensagens entre dois usuários
+      parameters:
+        - name: usuario1_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: usuario2_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Histórico de mensagens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mensagem'
+
+  /chat/enviar:
+    post:
+      tags:
+        - Chat
+      summary: Envia nova mensagem
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - remetente_id
+                - destinatario_id
+                - conteudo
+              properties:
+                remetente_id:
+                  type: integer
+                destinatario_id:
+                  type: integer
+                conteudo:
+                  type: string
+      responses:
+        '201':
+          description: Mensagem enviada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+
+  # CERTIFICADOS
+  /certificados/colaborador/{id}:
+    get:
+      tags:
+        - Certificados
+      summary: Lista certificados do colaborador
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de certificados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificado'
+
+  /certificados/emitir:
+    post:
+      tags:
+        - Certificados
+      summary: Emite certificado automático
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - colaborador_id
+                - trilha_id
+              properties:
+                colaborador_id:
+                  type: integer
+                trilha_id:
+                  type: integer
+      responses:
+        '201':
+          description: Certificado emitido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificado'
+
+  # RECOMPENSAS
+  /recompensas/catalogo:
+    get:
+      tags:
+        - Recompensas
+      summary: Catálogo de recompensas
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Catálogo disponível
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recompensa'
+
+  /recompensas/trocar:
+    post:
+      tags:
+        - Recompensas
+      summary: Troca pontos por recompensa
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - colaborador_id
+                - recompensa_id
+              properties:
+                colaborador_id:
+                  type: integer
+                recompensa_id:
+                  type: integer
+      responses:
+        '200':
+          description: Troca realizada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    type: string
+                  pontos_restantes:
+                    type: integer
+
+  # CURSOS
+  /cursos:
+    get:
+      tags:
+        - Cursos
+      summary: Lista cursos disponíveis
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de cursos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Curso'
+
+  /cursos/colaborador/{id}/progresso:
+    get:
+      tags:
+        - Cursos
+      summary: Progresso do colaborador
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Progresso nos cursos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    curso_id:
+                      type: integer
+                    curso_nome:
+                      type: string
+                    progresso_percentual:
+                      type: integer
+                    status:
+                      type: string

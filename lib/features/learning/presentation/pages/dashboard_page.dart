@@ -22,7 +22,11 @@ class DashboardPage extends StatelessWidget {
         children: [
           LayoutBuilder(
             builder: (context, constraints) {
-              final columns = constraints.maxWidth > 900 ? 4 : constraints.maxWidth > 560 ? 2 : 1;
+              final columns = constraints.maxWidth > 900
+                  ? 4
+                  : constraints.maxWidth > 560
+                      ? 2
+                      : 1;
               return GridView.count(
                 crossAxisCount: columns,
                 crossAxisSpacing: 16,
@@ -33,7 +37,7 @@ class DashboardPage extends StatelessWidget {
                 children: [
                   StatCard(
                     label: 'Pontos',
-                    value: '${user.points}',
+                    value: '${user.extraData!['points']}',
                     icon: Icons.trending_up_rounded,
                     color: AppTheme.primary,
                   ),
@@ -94,33 +98,39 @@ class DashboardPage extends StatelessWidget {
                               child: Card(
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  side: const BorderSide(color: Color(0xFFE5E7EB), width: 1.5),
+                                  side: const BorderSide(
+                                      color: Color(0xFFE5E7EB), width: 1.5),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(18),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           Expanded(
                                             child: Text(
                                               course.title,
-                                              style: const TextStyle(fontWeight: FontWeight.w900),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.w900),
                                             ),
                                           ),
                                           Chip(
                                             label: Text(course.category),
-                                            backgroundColor: const Color(0xFFEFF6FF),
-                                            labelStyle: const TextStyle(color: AppTheme.primary),
+                                            backgroundColor:
+                                                const Color(0xFFEFF6FF),
+                                            labelStyle: const TextStyle(
+                                                color: AppTheme.primary),
                                           ),
                                         ],
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
                                         course.description,
-                                        style: const TextStyle(color: AppTheme.muted),
+                                        style: const TextStyle(
+                                            color: AppTheme.muted),
                                       ),
                                       const SizedBox(height: 16),
                                       Row(
@@ -142,7 +152,8 @@ class DashboardPage extends StatelessWidget {
                                       SizedBox(
                                         width: double.infinity,
                                         child: ElevatedButton(
-                                          onPressed: () => controller.openCourse(course.id),
+                                          onPressed: () =>
+                                              controller.openCourse(course.id),
                                           child: const Text('Continuar'),
                                         ),
                                       ),

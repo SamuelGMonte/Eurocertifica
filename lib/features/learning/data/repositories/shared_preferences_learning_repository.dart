@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:eurocertifica_web/features/auth/data/models/user_model.dart';
+import 'package:eurocertifica_web/features/auth/domain/entities/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/entities/course.dart';
 import '../../domain/entities/learning_state.dart';
 import '../../domain/entities/quiz.dart';
-import '../../domain/entities/user.dart';
 import '../../domain/entities/user_progress.dart';
 import '../../domain/repositories/learning_repository.dart';
 import '../datasources/course_seed.dart';
@@ -43,9 +44,7 @@ class SharedPreferencesLearningRepository implements LearningRepository {
     }
 
     return LearningState(
-      user: userPayload == null
-          ? null
-          : UserModel.fromJson(jsonDecode(userPayload) as Map<String, dynamic>),
+      user: userPayload == null ? null : UserModel.fromJson(userPayload),
       courses: courses,
       progressByCourse: progressPayload == null
           ? {}
@@ -59,22 +58,9 @@ class SharedPreferencesLearningRepository implements LearningRepository {
   }
 
   @override
-  Future<User> login(String email, String password) async {
-    final normalizedEmail = email.trim();
-    final user = User(
-      id: _randomId(),
-      email: normalizedEmail,
-      name: normalizedEmail.split('@').first,
-      points: 0,
-    );
-    await saveUser(user);
-    return user;
-  }
-
-  @override
   QuizAttempt gradeQuiz({
     required Course course,
-    required User? user,
+    required User user,
     required Map<String, String> answers,
   }) {
     final correctCount = course.quiz.questions.where((question) {
@@ -85,7 +71,7 @@ class SharedPreferencesLearningRepository implements LearningRepository {
     return QuizAttempt(
       id: _randomId(),
       courseId: course.id,
-      userId: user?.id ?? '',
+      userId: user.id,
       answers: answers,
       score: score,
       passed: score >= course.quiz.passingScore,
@@ -94,23 +80,13 @@ class SharedPreferencesLearningRepository implements LearningRepository {
   }
 
   @override
-  Future<void> saveUser(User? user) async {
-    if (user == null) {
-      await _preferences.remove(_userKey);
-      return;
-    }
-    await _preferences.setString(
-      _userKey,
-      jsonEncode(UserModel.fromEntity(user).toJson()),
-    );
-  }
-
-  @override
   Future<void> saveCourses(List<Course> courses) async {
     await _preferences.setString(
       _coursesKey,
       jsonEncode(
-        courses.map((course) => CourseModel.fromEntity(course).toJson()).toList(),
+        courses
+            .map((course) => CourseModel.fromEntity(course).toJson())
+            .toList(),
       ),
     );
   }
@@ -139,5 +115,17 @@ class SharedPreferencesLearningRepository implements LearningRepository {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
     final random = Random();
     return List.generate(9, (_) => chars[random.nextInt(chars.length)]).join();
+  }
+
+  @override
+  Future<void> saveUser(User? user) async {
+    if (user == null) {
+      await _preferences.remove(_userKey);
+      return;
+    }
+    await _preferences.setString(
+      _userKey,
+      jsonEncode(UserModel.fromEntity(user).toJson()),
+    );
   }
 }

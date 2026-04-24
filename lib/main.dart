@@ -1,3 +1,7 @@
+import 'package:eurocertifica_web/core/network/mock_http_client.dart';
+import 'package:eurocertifica_web/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:eurocertifica_web/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:eurocertifica_web/features/auth/domain/usecases/login_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -8,12 +12,11 @@ import 'features/learning/data/datasources/course_seed.dart';
 import 'features/learning/data/repositories/shared_preferences_learning_repository.dart';
 import 'features/learning/domain/usecases/enroll_course.dart';
 import 'features/learning/domain/usecases/load_learning_state.dart';
-import 'features/learning/domain/usecases/login_user.dart';
 import 'features/learning/domain/usecases/logout_user.dart';
 import 'features/learning/domain/usecases/submit_quiz.dart';
 import 'features/learning/domain/usecases/update_lesson_progress.dart';
 import 'features/learning/presentation/controllers/app_controller.dart';
-import 'features/learning/presentation/pages/app_shell.dart';
+import 'app/presentation/pages/app_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,10 +39,15 @@ class EurocertificaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final httpClient = MockHttpClient();
+    final remoteDatasource = AuthRemoteDatasource(httpClient: httpClient);
+    final authRepository =
+        AuthRepositoryImpl(remoteDatasource: remoteDatasource);
+
     return ChangeNotifierProvider(
       create: (_) => AppController(
         loadLearningState: LoadLearningState(_repository),
-        loginUser: LoginUser(_repository),
+        loginUser: LoginUsecase(authRepository),
         logoutUser: LogoutUser(_repository),
         enrollCourse: EnrollCourse(_repository),
         updateLessonProgress: UpdateLessonProgress(_repository),

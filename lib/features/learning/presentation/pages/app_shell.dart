@@ -5,7 +5,7 @@ import '../controllers/app_controller.dart';
 import 'course_content_page.dart';
 import 'courses_page.dart';
 import 'dashboard_page.dart';
-import 'login_page.dart';
+import '../../../auth/presentation/pages/login_page.dart';
 import 'profile_page.dart';
 import 'quiz_page.dart';
 import 'ranking_page.dart';

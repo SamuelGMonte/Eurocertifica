@@ -54,15 +54,17 @@ class ProfilePage extends StatelessWidget {
                                   ?.copyWith(fontWeight: FontWeight.w900),
                             ),
                             const SizedBox(height: 4),
-                            Text(user.email, style: const TextStyle(color: AppTheme.muted)),
+                            Text(user.email,
+                                style: const TextStyle(color: AppTheme.muted)),
                           ],
                         ),
                       ),
                       Column(
                         children: [
-                          const Text('Pontos Totais', style: TextStyle(color: AppTheme.muted)),
+                          const Text('Pontos Totais',
+                              style: TextStyle(color: AppTheme.muted)),
                           Text(
-                            '${user.points}',
+                            '${user.extraData!['points']}',
                             style: const TextStyle(
                               color: AppTheme.primary,
                               fontSize: 32,
@@ -78,12 +80,18 @@ class ProfilePage extends StatelessWidget {
                     builder: (context, constraints) {
                       final wide = constraints.maxWidth > 560;
                       final children = [
-                        _ProfileMetric('Cursos Inscritos', '${enrolled.length}', AppTheme.primary),
-                        _ProfileMetric('Certificados', '${certificates.length}', AppTheme.success),
-                        _ProfileMetric('Taxa de Conclusão', '$completionRate%', const Color(0xFF7C3AED)),
+                        _ProfileMetric('Cursos Inscritos', '${enrolled.length}',
+                            AppTheme.primary),
+                        _ProfileMetric('Certificados', '${certificates.length}',
+                            AppTheme.success),
+                        _ProfileMetric('Taxa de Conclusão', '$completionRate%',
+                            const Color(0xFF7C3AED)),
                       ];
                       return wide
-                          ? Row(children: children.map((child) => Expanded(child: child)).toList())
+                          ? Row(
+                              children: children
+                                  .map((child) => Expanded(child: child))
+                                  .toList())
                           : Column(children: children);
                     },
                   ),
@@ -100,7 +108,8 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.workspace_premium_rounded, color: Color(0xFFEAB308)),
+                      const Icon(Icons.workspace_premium_rounded,
+                          color: Color(0xFFEAB308)),
                       const SizedBox(width: 10),
                       Text(
                         'Certificados de Conclusão',
@@ -115,13 +124,15 @@ class ProfilePage extends StatelessWidget {
                   if (certificates.isEmpty)
                     const EmptyState(
                       icon: Icons.workspace_premium_rounded,
-                      message: 'Você ainda não tem certificados. Complete um curso e passe na prova!',
+                      message:
+                          'Você ainda não tem certificados. Complete um curso e passe na prova!',
                     )
                   else
                     Column(
                       children: certificates
                           .map(
-                            (certificate) => _CertificateTile(certificate: certificate),
+                            (certificate) =>
+                                _CertificateTile(certificate: certificate),
                           )
                           .toList(),
                     ),
@@ -148,11 +159,14 @@ class _ProfileMetric extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         children: [
-          Text(label, textAlign: TextAlign.center, style: const TextStyle(color: AppTheme.muted)),
+          Text(label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppTheme.muted)),
           const SizedBox(height: 6),
           Text(
             value,
-            style: TextStyle(color: color, fontSize: 24, fontWeight: FontWeight.w900),
+            style: TextStyle(
+                color: color, fontSize: 24, fontWeight: FontWeight.w900),
           ),
         ],
       ),
@@ -167,7 +181,8 @@ class _CertificateTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final date = MaterialLocalizations.of(context).formatShortDate(certificate.attempt.date);
+    final date = MaterialLocalizations.of(context)
+        .formatShortDate(certificate.attempt.date);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -185,7 +200,8 @@ class _CertificateTile extends StatelessWidget {
               color: const Color(0xFFFEF3C7),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.workspace_premium_rounded, color: Color(0xFFD97706)),
+            child: const Icon(Icons.workspace_premium_rounded,
+                color: Color(0xFFD97706)),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -194,7 +210,8 @@ class _CertificateTile extends StatelessWidget {
               children: [
                 Text(
                   certificate.course.title,
-                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w900, fontSize: 16),
                 ),
                 const SizedBox(height: 6),
                 Text(
