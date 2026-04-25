@@ -115,6 +115,25 @@ C4Component
     Rel(dashboard_gestor, db_corp, "Busca times")
     Rel(desafios, db_corp, "Valida áreas/competências")
 ```
+## Casos de Uso Principais
+
+### 🧑‍💼 Onboarding
+Novo colaborador completa a trilha inicial de integração e ganha sua primeira badge de "Iniciante".
+
+---
+
+### 🧪 Treinamento de SOP
+Colaborador realiza desafio interativo sobre novo procedimento operacional padrão (SOP) da ANVISA.
+
+---
+
+### 📢 Intervenção do Gestor
+Gestor identifica colaborador inativo há 7 dias e envia uma missão motivacional personalizada.
+
+---
+
+### 🏆 Resgate de Prêmio
+Colaborador troca "moscas" acumuladas por uma caneca personalizada ou vale-presente no catálogo.
 
 ## 🧪 Testes
 
