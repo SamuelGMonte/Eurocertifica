@@ -15,12 +15,48 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isSubmitting = false;
+  String? _loginError;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _submitLogin() async {
+    if (_isSubmitting || !_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isSubmitting = true;
+      _loginError = null;
+    });
+
+    try {
+      await context.read<AppController>().login(
+            _emailController.text.trim(),
+            _passwordController.text,
+          );
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _loginError = 'Email ou senha inválidos';
+      });
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  void _clearLoginError() {
+    if (_loginError != null) {
+      setState(() {
+        _loginError = null;
+      });
+    }
   }
 
   @override
@@ -95,6 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                                   value == null || value.trim().isEmpty
                                       ? 'Informe seu email ou usuário'
                                       : null,
+                              onChanged: (_) => _clearLoginError(),
                             ),
                             const SizedBox(height: 18),
                             TextFormField(
@@ -108,17 +145,25 @@ class _LoginPageState extends State<LoginPage> {
                                   value == null || value.isEmpty
                                       ? 'Informe sua senha'
                                       : null,
+                              onChanged: (_) => _clearLoginError(),
+                              onFieldSubmitted: (_) => _submitLogin(),
                             ),
+                            if (_loginError != null) ...[
+                              const SizedBox(height: 14),
+                              Text(
+                                _loginError!,
+                                style: const TextStyle(
+                                  color: Color(0xFFDC2626),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
                             const SizedBox(height: 24),
                             ElevatedButton(
-                              onPressed: () async {
-                                if (!_formKey.currentState!.validate()) return;
-                                await context.read<AppController>().login(
-                                      _emailController.text,
-                                      _passwordController.text,
-                                    );
-                              },
-                              child: const Text('Entrar'),
+                              onPressed: _isSubmitting ? null : _submitLogin,
+                              child: Text(
+                                _isSubmitting ? 'Entrando...' : 'Entrar',
+                              ),
                             ),
                             const SizedBox(height: 12),
                             TextButton(

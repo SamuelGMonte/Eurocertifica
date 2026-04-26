@@ -11,18 +11,8 @@ class RankingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AppController>().user;
-    final ranking = [
-      _RankingEntry(1, 'João Silva', 450, '🥇'),
-      _RankingEntry(2, 'Maria Santos', 420, '🥈'),
-      _RankingEntry(3, 'Pedro Costa', 380, '🥉'),
-      _RankingEntry(
-          4, user?.name ?? 'Você', user?.extraData?['points'] ?? 0, '★',
-          isUser: true),
-      _RankingEntry(5, 'Ana Oliveira', 250, ''),
-      _RankingEntry(6, 'Carlos Mendes', 200, ''),
-      _RankingEntry(7, 'Lucia Ferreira', 180, ''),
-      _RankingEntry(8, 'Roberto Alves', 150, ''),
-    ];
+    final entries = _buildRanking(user);
+    final userEntry = entries.where((entry) => entry.isUser).firstOrNull;
 
     return AppScaffold(
       title: 'Ranking Global',
@@ -30,7 +20,7 @@ class RankingPage extends StatelessWidget {
       maxWidth: 920,
       child: ListView(
         children: [
-          if (user != null)
+          if (userEntry != null)
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -41,16 +31,23 @@ class RankingPage extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Expanded(
-                    child: _HeroMetric(label: 'Sua Posição', value: '#4'),
+                  Expanded(
+                    child: _HeroMetric(
+                      label: 'Sua Posição',
+                      value: '#${userEntry.rank}',
+                    ),
                   ),
                   Expanded(
                     child: _HeroMetric(
-                        label: 'Seus Pontos',
-                        value: '${user.extraData!['points']}'),
+                      label: 'Seus Pontos',
+                      value: '${userEntry.points}',
+                    ),
                   ),
-                  const Icon(Icons.star_rounded,
-                      color: Color(0xFFFDE047), size: 56),
+                  const Icon(
+                    Icons.star_rounded,
+                    color: Color(0xFFFDE047),
+                    size: 56,
+                  ),
                 ],
               ),
             ),
@@ -68,46 +65,63 @@ class RankingPage extends StatelessWidget {
                   DataColumn(label: Text('Pontos'), numeric: true),
                   DataColumn(label: Text('Badge')),
                 ],
-                rows: ranking.map((entry) {
+                rows: entries.map((entry) {
                   return DataRow(
                     color: entry.isUser
                         ? MaterialStateProperty.all(const Color(0xFFEFF6FF))
                         : null,
                     cells: [
-                      DataCell(Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 18,
-                            backgroundColor: _rankColor(entry.rank),
-                            child: Text(
-                              '${entry.rank}',
-                              style: const TextStyle(
+                      DataCell(
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 18,
+                              backgroundColor: _rankColor(entry.rank),
+                              child: Text(
+                                '${entry.rank}',
+                                style: const TextStyle(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w900),
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text('${entry.rank}º',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w800)),
-                        ],
-                      )),
-                      DataCell(Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(entry.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w800)),
-                          if (entry.isUser)
-                            const Text('Você',
+                            const SizedBox(width: 10),
+                            Text(
+                              '${entry.rank}º',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      DataCell(
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              entry.name,
+                              style: const TextStyle(fontWeight: FontWeight.w800),
+                            ),
+                            if (entry.isUser)
+                              const Text(
+                                'Você',
                                 style: TextStyle(
-                                    color: AppTheme.primary, fontSize: 12)),
-                        ],
-                      )),
+                                  color: AppTheme.primary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                       DataCell(Text('${entry.points}')),
-                      DataCell(Text(entry.badge,
-                          style: const TextStyle(fontSize: 22))),
+                      DataCell(
+                        Text(
+                          entry.badge,
+                          style: const TextStyle(fontSize: 22),
+                        ),
+                      ),
                     ],
                   );
                 }).toList(),
@@ -139,6 +153,43 @@ class RankingPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<_RankingEntry> _buildRanking(dynamic user) {
+    final entries = <_RankingEntry>[
+      const _RankingEntry(name: 'João Silva', points: 450, badge: '🥇'),
+      const _RankingEntry(name: 'Maria Santos', points: 420, badge: '🥈'),
+      const _RankingEntry(name: 'Pedro Costa', points: 380, badge: '🥉'),
+      const _RankingEntry(name: 'Ana Oliveira', points: 250, badge: ''),
+      const _RankingEntry(name: 'Carlos Mendes', points: 200, badge: ''),
+      const _RankingEntry(name: 'Lucia Ferreira', points: 180, badge: ''),
+      const _RankingEntry(name: 'Roberto Alves', points: 150, badge: ''),
+    ];
+
+    if (user != null) {
+      entries.add(
+        _RankingEntry(
+          name: user.name as String,
+          points: _readPoints(user),
+          badge: '★',
+          isUser: true,
+        ),
+      );
+    }
+
+    entries.sort((a, b) => b.points.compareTo(a.points));
+
+    return [
+      for (var index = 0; index < entries.length; index++)
+        entries[index].copyWith(rank: index + 1),
+    ];
+  }
+
+  int _readPoints(dynamic user) {
+    final rawPoints = user?.extraData?['points'];
+    if (rawPoints is int) return rawPoints;
+    if (rawPoints is num) return rawPoints.toInt();
+    return 0;
   }
 
   Color _rankColor(int rank) {
@@ -178,11 +229,11 @@ class _HeroMetric extends StatelessWidget {
 }
 
 class _RankingEntry {
-  const _RankingEntry(
-    this.rank,
-    this.name,
-    this.points,
-    this.badge, {
+  const _RankingEntry({
+    required this.name,
+    required this.points,
+    required this.badge,
+    this.rank = 0,
     this.isUser = false,
   });
 
@@ -191,4 +242,20 @@ class _RankingEntry {
   final int points;
   final String badge;
   final bool isUser;
+
+  _RankingEntry copyWith({
+    int? rank,
+    String? name,
+    int? points,
+    String? badge,
+    bool? isUser,
+  }) {
+    return _RankingEntry(
+      rank: rank ?? this.rank,
+      name: name ?? this.name,
+      points: points ?? this.points,
+      badge: badge ?? this.badge,
+      isUser: isUser ?? this.isUser,
+    );
+  }
 }
